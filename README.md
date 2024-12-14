@@ -1,3 +1,21 @@
+# Baristhename
+
+### Layout
+
+bar-app/
+├── app/
+│   ├── layout.tsx          # Layout principale
+│   ├── page.tsx            # Home page
+│   ├── menu/
+│   │   └── page.tsx        # Pagina del menu
+│   ├── blog/
+│   │   └── page.tsx        # Pagina del blog
+│   └── globals.css         # Stili globali
+├── components/             # Componenti riutilizzabili
+├── lib/                    # Utility e logica
+├── public/                 # Assets statici
+└── types/                  # Definizioni di tipo
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
