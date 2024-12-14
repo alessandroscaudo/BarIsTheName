@@ -1,6 +1,13 @@
 import "./globals.css";
 import Navbar from "@/components/navbar";
 
+export const metadata = {
+  title: "Il Mio Sito",
+  description: "Navbar visibile su tutte le pagine",
+  appleWebApp: {
+    title: "Bar",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -8,7 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="it">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Bar" />
+      </head>
       <body>
         {/* Navbar visibile su tutte le pagine */}
         <Navbar />

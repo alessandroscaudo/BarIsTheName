@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect, FC } from "react";
 import Link from "next/link"; // Importa Link di Next.js per la navigazione interna
+import {Home, Newspaper, SquareMenu, User} from 'lucide-react';
 
 // Props per NavLink
 interface NavLinkProps {
   href: string;
+  icon: React.ReactNode;
   label: string;
 }
 
@@ -25,9 +27,10 @@ const Navbar: FC = () => {
   }, []);
 
   // Componente per i singoli link di navigazione
-  const NavLink: FC<NavLinkProps> = ({ href, label }) => (
+  const NavLink: FC<NavLinkProps> = ({ href, icon, label }) => (
     <Link href={href} passHref>
       <div className="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 transition-colors cursor-pointer">
+        {icon} {/* Icona */}
         <span className="text-xs mt-1">{label}</span>
       </div>
     </Link>
@@ -36,10 +39,10 @@ const Navbar: FC = () => {
   // Contenuto della navigazione
   const NavigationContent: FC = () => (
     <>
-      <NavLink href="/" label="Home" />
-      <NavLink href="/profilo" label="Profilo" />
-      <NavLink href="/carrello" label="Carrello" />
-      <NavLink href="/impostazioni" label="Impostazioni" />
+      <NavLink href="/" label="Home" icon={<Home size={24} />} />
+      <NavLink href="/blog" label="Notizie" icon={<Newspaper size={24} />} />
+      <NavLink href="/menu" label="Menu" icon={<SquareMenu size={24} />} />
+      <NavLink href="/user" label="User" icon={<User size={24} />} />
     </>
   );
 
