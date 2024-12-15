@@ -7,6 +7,39 @@ const notion = new Client({
   auth: process.env.NOTION_TOKEN 
 })
 
+// Tipo per le proprietà specifiche di Notion
+interface TitleProperty {
+  title: { plain_text: string }[];
+}
+
+interface SlugProperty {
+  formula: { string: string };
+}
+
+interface DescriptionProperty {
+  rich_text: { plain_text: string }[];
+}
+
+interface PublishedDateProperty {
+  date: { start: string };
+}
+
+interface CoverImageProperty {
+  files: { file: { url: string } }[];
+}
+
+// Tipo per la struttura di una pagina di Notion
+interface NotionPage {
+  id: string
+  properties: {
+    Title: TitleProperty
+    Slug: SlugProperty
+    Description: DescriptionProperty
+    PublishedDate: PublishedDateProperty
+    CoverImage: CoverImageProperty
+  }
+}
+
 // Tipo per i post del blog
 interface BlogPost {
   id: string
@@ -15,18 +48,6 @@ interface BlogPost {
   publishedDate: string
   coverImage?: string | null
   slug: string
-}
-
-// Tipo per la struttura delle pagine di Notion
-interface NotionPage {
-  id: string
-  properties: {
-    Title: { title: { plain_text: string }[] }
-    Slug: { formula: { string: string } }
-    Description: { rich_text: { plain_text: string }[] }
-    PublishedDate: { date: { start: string } }
-    CoverImage: { files: { file: { url: string } }[] }
-  }
 }
 
 // Funzione per recuperare i post dal database Notion
@@ -49,16 +70,20 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     })
 
     const posts = response.results.map((page: NotionPage) => {
+      // Gestione delle proprietà con sicurezza
       const title = page.properties.Title?.title?.[0]?.plain_text || "Titolo non disponibile"
       const slug = page.properties.Slug?.formula?.string || page.id
+      const description = page.properties.Description?.rich_text?.[0]?.plain_text || ""
+      const publishedDate = page.properties.PublishedDate?.date?.start || new Date().toISOString()
+      const coverImage = page.properties.CoverImage?.files?.[0]?.file?.url || null
 
       return {
         id: page.id,
-        title: title,
-        description: page.properties.Description?.rich_text?.[0]?.plain_text || "",
-        publishedDate: page.properties.PublishedDate?.date?.start || new Date().toISOString(),
-        coverImage: page.properties.CoverImage?.files?.[0]?.file?.url || null,
-        slug: slug
+        title,
+        description,
+        publishedDate,
+        coverImage,
+        slug
       }
     }).filter(post => post.title !== "Titolo non disponibile")
 
