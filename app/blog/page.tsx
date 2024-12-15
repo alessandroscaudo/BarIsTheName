@@ -17,6 +17,18 @@ interface BlogPost {
   slug: string
 }
 
+// Tipo per la struttura delle pagine di Notion
+interface NotionPage {
+  id: string
+  properties: {
+    Title: { title: { plain_text: string }[] }
+    Slug: { formula: { string: string } }
+    Description: { rich_text: { plain_text: string }[] }
+    PublishedDate: { date: { start: string } }
+    CoverImage: { files: { file: { url: string } }[] }
+  }
+}
+
 // Funzione per recuperare i post dal database Notion
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
@@ -36,8 +48,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       ]
     })
 
-    const posts = response.results.map((page: any) => {
-      // Gestione più robusta delle proprietà
+    const posts = response.results.map((page: NotionPage) => {
       const title = page.properties.Title?.title?.[0]?.plain_text || "Titolo non disponibile"
       const slug = page.properties.Slug?.formula?.string || page.id
 
@@ -82,12 +93,12 @@ export default async function BlogPage() {
             >
               {post.coverImage && (
                 <Image
-                src={post.coverImage || '/images/default-image.jpeg'} // Percorso dell'immagine di default
-                alt={post.title}
-                width={400}
-                height={250}
-                className="w-full h-48 object-cover"
-              />              
+                  src={post.coverImage || '/images/default-image.jpeg'} // Percorso dell'immagine di default
+                  alt={post.title}
+                  width={400}
+                  height={250}
+                  className="w-full h-48 object-cover"
+                />
               )}
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-2">
