@@ -1,53 +1,53 @@
-import { Client } from "@notionhq/client"
-import Link from "next/link"
-import Image from "next/image"
+import { Client } from "@notionhq/client";
+import Link from "next/link";
+import Image from "next/image";
 
 // Configurazione del client Notion
 const notion = new Client({ 
   auth: process.env.NOTION_TOKEN 
-})
+});
 
 // Tipo per le proprietà specifiche di Notion
 interface TitleProperty {
-  title: { plain_text: string }[];
+  title: { plain_text: string }[] | null | undefined;
 }
 
 interface SlugProperty {
-  formula: { string: string };
+  formula: { string: string } | null | undefined;
 }
 
 interface DescriptionProperty {
-  rich_text: { plain_text: string }[];
+  rich_text: { plain_text: string }[] | null | undefined;
 }
 
 interface PublishedDateProperty {
-  date: { start: string };
+  date: { start: string } | null | undefined;
 }
 
 interface CoverImageProperty {
-  files: { file: { url: string } }[];
+  files: [{ file: { url: string } }] | null | undefined;
 }
 
 // Tipo per la struttura di una pagina di Notion
 interface NotionPage {
-  id: string
+  id: string;
   properties: {
-    Title: TitleProperty
-    Slug: SlugProperty
-    Description: DescriptionProperty
-    PublishedDate: PublishedDateProperty
-    CoverImage: CoverImageProperty
-  }
+    Title: TitleProperty;
+    Slug: SlugProperty;
+    Description: DescriptionProperty;
+    PublishedDate: PublishedDateProperty;
+    CoverImage: CoverImageProperty;
+  };
 }
 
 // Tipo per i post del blog
 interface BlogPost {
-  id: string
-  title: string
-  description: string
-  publishedDate: string
-  coverImage?: string | null
-  slug: string
+  id: string;
+  title: string;
+  description: string;
+  publishedDate: string;
+  coverImage?: string | null;
+  slug: string;
 }
 
 // Funzione per recuperare i post dal database Notion
@@ -67,15 +67,15 @@ async function getBlogPosts(): Promise<BlogPost[]> {
           direction: "descending"
         }
       ]
-    })
+    });
 
     const posts = response.results.map((page: NotionPage) => {
       // Gestione delle proprietà con sicurezza
-      const title = page.properties.Title?.title?.[0]?.plain_text || "Titolo non disponibile"
-      const slug = page.properties.Slug?.formula?.string || page.id
-      const description = page.properties.Description?.rich_text?.[0]?.plain_text || ""
-      const publishedDate = page.properties.PublishedDate?.date?.start || new Date().toISOString()
-      const coverImage = page.properties.CoverImage?.files?.[0]?.file?.url || null
+      const title = page.properties.Title?.title?.[0]?.plain_text ?? "Titolo non disponibile";
+      const slug = page.properties.Slug?.formula?.string ?? page.id;
+      const description = page.properties.Description?.rich_text?.[0]?.plain_text ?? "";
+      const publishedDate = page.properties.PublishedDate?.date?.start ?? new Date().toISOString();
+      const coverImage = page.properties.CoverImage?.files?.[0]?.file?.url ?? null;
 
       return {
         id: page.id,
@@ -84,19 +84,19 @@ async function getBlogPosts(): Promise<BlogPost[]> {
         publishedDate,
         coverImage,
         slug
-      }
-    }).filter(post => post.title !== "Titolo non disponibile")
+      };
+    }).filter(post => post.title !== "Titolo non disponibile");
 
-    return posts
+    return posts;
   } catch (error) {
-    console.error("Errore nel recupero dei post da Notion:", error)
-    return []
+    console.error("Errore nel recupero dei post da Notion:", error);
+    return [];
   }
 }
 
 // Pagina del Blog
 export default async function BlogPage() {
-  const posts = await getBlogPosts()
+  const posts = await getBlogPosts();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -150,7 +150,7 @@ export default async function BlogPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Metadata per SEO
@@ -162,5 +162,5 @@ export async function generateMetadata() {
       title: 'Blog - Le Nostre Ultime Notizie',
       description: 'Scopri gli ultimi articoli e aggiornamenti dal nostro blog',
     }
-  }
+  };
 }
